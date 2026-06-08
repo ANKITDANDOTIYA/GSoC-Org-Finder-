@@ -4974,6 +4974,7 @@ if(e.key.toLowerCase()==='r'){
   const mainHeader = document.querySelector("header.fixed.top-0");
 
   let currentSection = 0;
+  let navInitialized = false;
   let isProgrammaticScroll = false;
   let programmaticScrollTargetTop = 0;
   let programmaticScrollDeadline = 0;
@@ -5008,10 +5009,11 @@ if(e.key.toLowerCase()==='r'){
   function setCurrentSection(index) {
     const nextSectionIndex = Math.max(0, Math.min(index, sections.length - 1));
 
-    if (currentSection === nextSectionIndex) return;
+    if (navInitialized && currentSection === nextSectionIndex) return;
 
     currentSection = nextSectionIndex;
     updateNavState();
+    navInitialized = true;
   }
 
   function scrollToSectionIndex(index) {
@@ -5135,6 +5137,14 @@ if(e.key.toLowerCase()==='r'){
   window.addEventListener("scroll", scheduleCurrentSectionUpdate, { passive: true });
   window.addEventListener("resize", scheduleCurrentSectionUpdate);
   updateCurrentSection();
+
+  const cancelProgrammaticScroll = () => {
+    isProgrammaticScroll = false;
+  };
+  window.addEventListener("wheel", cancelProgrammaticScroll, { passive: true });
+  window.addEventListener("touchstart", cancelProgrammaticScroll, { passive: true });
+  window.addEventListener("mousedown", cancelProgrammaticScroll, { passive: true });
+  window.addEventListener("keydown", cancelProgrammaticScroll, { passive: true });
 
   document.getElementById("nextSectionBtn")?.addEventListener("click", () => {
     if (currentSection < sections.length - 1) {
