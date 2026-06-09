@@ -4039,17 +4039,17 @@ if(org.ideas){
     applyFilters(); // to reset URL params
   };
 
-  // Shared search function to handle badge tracking and filter application
-  function performSearch(queryText) {
+  // Shared search function to handle filter application, with optional badge tracking
+  function performSearch(queryText, shouldTrack = false) {
     const query = queryText.trim();
-    if (typeof BadgeSystem !== 'undefined' && query.length > 0) {
+    if (shouldTrack && typeof BadgeSystem !== 'undefined' && query.length > 0) {
       BadgeSystem.trackSearch();
     }
     applyFilters();
   }
 
   document.getElementById('searchInput').addEventListener('input', (e) => {
-    performSearch(e.target.value);
+    performSearch(e.target.value, false);
   });
   document.getElementById('categoryFilter').addEventListener('change', () => {
     // Track filter badge when user changes category
@@ -4092,13 +4092,13 @@ if(org.ideas){
     heroSearch.value = document.getElementById('searchInput')?.value || new URLSearchParams(location.search).get('q') || '';
     const heroSearchSubmit = () => {
       document.getElementById('searchInput').value = heroSearch.value;
-      performSearch(heroSearch.value);
+      performSearch(heroSearch.value, true);
       document.getElementById('orgs')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     heroSearch.addEventListener('input', (e) => {
       document.getElementById('searchInput').value = e.target.value;
-      performSearch(e.target.value);
+      performSearch(e.target.value, false);
     });
 
     heroSearch.addEventListener('keydown', (e) => {
